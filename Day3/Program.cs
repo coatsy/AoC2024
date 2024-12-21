@@ -8,6 +8,7 @@
             var instructionList = new InstructionList(input);
 
             Console.WriteLine($"Sum of products: {instructionList.ProductSum}");
+            Console.WriteLine($"Sum of enabled products: {instructionList.EnabledProductSum}");
         }
     }
 }
