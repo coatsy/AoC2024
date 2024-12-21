@@ -8,7 +8,8 @@
             var input = File.ReadLines("./input/input.txt").ToArray();
             var locationList = new LocationList();
             locationList.LoadLocations(input);
-            Console.WriteLine(locationList.GetDifferenceSum());
+            Console.WriteLine($"Difference Sum: {locationList.GetDifferenceSum()}");
+            Console.WriteLine($"SimilarityScore: {locationList.GetSimilarityScore()}");
         }
     }
 }

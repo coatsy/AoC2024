@@ -33,6 +33,11 @@ namespace Day1
             return _locations.Sum(location => Math.Abs(location.Item1 - location.Item2));
         }
 
+        public int GetSimilarityScore()
+        {
+            return _left.Sum(l=>l * _right.Count(r=> r == l));
+        }
+
         private void AddLocation(int x, int y)
         {
             _left.Add(x);
