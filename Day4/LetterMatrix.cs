@@ -10,8 +10,8 @@ namespace Day4
     internal class LetterMatrix
     {
         private readonly char[,] letters;
-        private int[,] XMASmatches;
-        private int[,] X_MASmatches;
+        private readonly int[,] XMASmatches;
+        private readonly int[,] X_MASmatches;
         private readonly Direction[] directions =
         {
             Direction.Up,
@@ -43,8 +43,8 @@ namespace Day4
             {
                 for (var j = 0; j < input[i].Length; j++)
                 {
-                    XMASmatches[i, j] = checkXMASLetter(i, j);
-                    X_MASmatches[i, j] = checkX_MASLetter(i, j);
+                    XMASmatches[i, j] = CheckXMASLetter(i, j);
+                    X_MASmatches[i, j] = CheckX_MASLetter(i, j);
                 }
             }
         }
@@ -52,14 +52,14 @@ namespace Day4
         public int XMASMatchSum => XMASmatches.Cast<int>().Sum();
         public int X_MASMatchSum => X_MASmatches.Cast<int>().Sum();
 
-        private static string[] X_MASPatterns =
+        private static readonly string[] X_MASPatterns =
         {
             "MMSS",
             "MSSM",
             "SSMM",
             "SMMS"
         };
-        private int checkX_MASLetter(int row, int col)
+        private int CheckX_MASLetter(int row, int col)
         {
             // check thatit's an A, otherwise return 0
             if (GetLetter(row, col) != 'A') return 0;
@@ -88,7 +88,7 @@ namespace Day4
 
         private int ColCount => letters.GetLength(1);
 
-        private int checkXMASLetter(int row, int col)
+        private int CheckXMASLetter(int row, int col)
         {
             // check that it's an X, otherwise return 0
             if (GetLetter(row, col) != 'X') return 0;
@@ -97,15 +97,15 @@ namespace Day4
 
             foreach (var direction in directions)
             {
-                matches += checkXMASLetterInDirection(row, col, direction);
+                matches += CheckXMASLetterInDirection(row, col, direction);
             }
 
             return matches;
 
         }
 
-        private static char[] theLetters = { 'X', 'M', 'A', 'S' };
-        private int checkXMASLetterInDirection(int row, int col, Direction direction)
+        private static readonly char[] theLetters = { 'X', 'M', 'A', 'S' };
+        private int CheckXMASLetterInDirection(int row, int col, Direction direction)
         {
             int rowDirection = 0, colDirection = 0;
 
