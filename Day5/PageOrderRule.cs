@@ -8,8 +8,8 @@ namespace Day5
 {
     internal class PageOrderRule
     {
-        private List<int> lower = [];
-        private List<int> higher = [];
+        private readonly List<int> lower = [];
+        private readonly List<int> higher = [];
 
         public bool IsInLowerList(int check) => lower.Contains(check);
         public bool IsInHigherList(int check) => higher.Contains(check);

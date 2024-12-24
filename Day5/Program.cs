@@ -57,7 +57,7 @@
                     }
                     if (!valid) break;
                 }
-                if (valid) middleSum += update.Skip((update.Count()-1)/2).Take(1).First();
+                if (valid) middleSum += update.Skip((update.Length-1)/2).Take(1).First();
             }
 
             Console.WriteLine($"Sum of the middle numbers of the valid updates is {middleSum}");
