@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Day5
 {
+    // class to hold the information aboud a particular page order - what pagse should appear before and after it
     internal class PageOrderRule
     {
         private readonly List<int> lower = [];
@@ -21,5 +22,8 @@ namespace Day5
         {
             if (!IsInLowerList(noToAdd)) lower.Add(noToAdd);
         }
+
+        internal IEnumerable<int> GetHigherList() => higher;
+        internal IEnumerable<int> GetLowerList() => lower;
     }
 }

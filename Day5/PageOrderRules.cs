@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Day5
 {
+    // Class to hold the rules for a page order and to check the validity of an update
     internal class PageOrderRules
     {
         private readonly List<Tuple<int, int>> rules = [];
@@ -30,8 +31,11 @@ namespace Day5
                 pageOrder.Add(lowest);
                 set = rules.Where(r => !pageOrder.Contains(r.Item1)).ToList();
             }
-            pageOrder.Add(set.First().Item1);
-            pageOrder.Add(set.First().Item2);
+            if (set.Count() == 1)
+            {
+                pageOrder.Add(set.First().Item1);
+                pageOrder.Add(set.First().Item2);
+            }
 
             orderCurrent = true;
         }
