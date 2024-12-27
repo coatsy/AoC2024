@@ -24,4 +24,14 @@ namespace Day6
         Down = 2,
         Left = 3
     }
+
+    [Flags]
+    public enum  DirectionFlags
+    {
+        None = 0,
+        Up = 1,
+        Right = 2,
+        Down = 4,
+        Left = 8
+    }
 }
