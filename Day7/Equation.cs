@@ -10,7 +10,8 @@ namespace Day7
     {
         private readonly Int64 targetResult;
         private readonly Int64[] values;
-        private readonly List<string> validCombinations = [];
+        private readonly List<string> validCombinations2Operators = [];
+        private readonly List<string> validCombinations3Operators = [];
         public Equation(string input)
         {
             var sides = input.Split(':');
@@ -28,15 +29,20 @@ namespace Day7
             checkCombinations();
         }
 
-        public bool IsValid => validCombinations.Count > 0;
+        public bool IsValid2Operators => validCombinations2Operators.Count > 0;
+        public bool IsValid3Operators => validCombinations3Operators.Count > 0;
         public Int64 TargetResult => targetResult;
+        public Int64[] Values => values;
+
+        char[] symbols2Operators = new char[] { '+', '*' };
+        char[] symbols3Operators = new char[] { '+', '*', '|' };
 
         private void checkCombinations()
         {
-
-            foreach (var combination in GenerateCombinations(values.Length - 1))
+            Int64 acc;
+            foreach (var combination in GenerateCombinations(values.Length - 1, symbols2Operators))
             {
-                Int64 acc = values[0];
+                acc = values[0];
                 for (int i = 1; i < values.Length; i++)
                 {
                     if (combination[i - 1] == '+') acc += values[i];
@@ -45,14 +51,30 @@ namespace Day7
                 }
                 if (acc == targetResult)
                 {
-                    validCombinations.Add(combination);
+                    validCombinations2Operators.Add(combination);
                 }
+            }
+
+            foreach (var combination in GenerateCombinations(values.Length - 1, symbols3Operators))
+            {
+                acc = values[0];
+                for (int i = 1; i < values.Length; i++)
+                {
+                    if (combination[i - 1] == '+') acc += values[i];
+                    else if (combination[i - 1] == '*') acc *= values[i];
+                    else if (combination[i - 1] == '|')acc = Int64.Parse($"{acc}{values[i]}"); 
+                    else throw new ArgumentException("Invalid combination");
+                }
+                if (acc == targetResult)
+                {
+                    validCombinations3Operators.Add(combination);
+                }
+
             }
         }
 
-        char[] symbols = new char[] { '+', '*' };
 
-        private IEnumerable<string> GenerateCombinations(int Length)
+        private IEnumerable<string> GenerateCombinations(int Length, char[] symbols)
         {
             if (Length == 0)
             {
@@ -60,7 +82,7 @@ namespace Day7
             }
 
             return from symbol in symbols
-                   from combination in GenerateCombinations(Length - 1)
+                   from combination in GenerateCombinations(Length - 1, symbols)
                    select symbol + combination;
         }
     }
