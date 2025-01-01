@@ -9,6 +9,7 @@
             var validEquations = equations.Where(e => e.IsValid).ToList();
 
             Console.WriteLine($"Valid equations: {validEquations.Count}");
+            // Console.WriteLine($"Largest target result: {equations.Max(e => e.TargetResult)}");
         }
     }
 }

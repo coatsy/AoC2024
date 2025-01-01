@@ -10,7 +10,7 @@ namespace Day7
     {
         private readonly Int64 targetResult;
         private readonly Int64[] values;
-        private string validCombination = string.Empty;
+        private readonly List<string> validCombinations = [];
         public Equation(string input)
         {
             var sides = input.Split(':');
@@ -18,37 +18,21 @@ namespace Day7
             {
                 throw new ArgumentException("Invalid input");
             }
+            if (sides[0] != targetResult.ToString())
+            {
+                throw new ArgumentException("Invalid parsing");
+            }
 
             values = sides[1].Trim().Split(' ').Select(v => Int64.Parse(v)).ToArray();
 
+            checkCombinations();
         }
 
-        public bool IsValid => isValid();
+        public bool IsValid => validCombinations.Count > 0;
+        public Int64 TargetResult => targetResult;
 
-        private bool isValid()
+        private void checkCombinations()
         {
-            /* 
-            // check the sum and the product first
-            if (values.Sum() == targetResult)
-            {
-                validCombination = new string('+', values.Length - 1);
-                return true;
-            }
-            if (values.Sum() > targetResult)
-            {
-                return false;
-            }
-            if (values.Aggregate((acc, x) => acc * x) == targetResult)
-            {
-                validCombination = new string('*', values.Length - 1);
-                return true;
-            }
-            if (values.Aggregate((acc, x) => acc * x) < targetResult)
-            {
-                return false;
-            }
-            */
-            bool valid = false;
 
             foreach (var combination in GenerateCombinations(values.Length - 1))
             {
@@ -57,17 +41,12 @@ namespace Day7
                 {
                     if (combination[i - 1] == '+') acc += values[i];
                     else if (combination[i - 1] == '*') acc *= values[i];
-                    if (acc > targetResult) break;
                 }
                 if (acc == targetResult)
                 {
-                    valid = true;
-                    validCombination = combination;
-                    break;
+                    validCombinations.Add(combination);
                 }
             }
-
-            return valid;
         }
 
         char[] symbols = new char[] { '+', '*' };
