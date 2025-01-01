@@ -41,6 +41,7 @@ namespace Day7
                 {
                     if (combination[i - 1] == '+') acc += values[i];
                     else if (combination[i - 1] == '*') acc *= values[i];
+                    else throw new ArgumentException("Invalid combination");
                 }
                 if (acc == targetResult)
                 {
