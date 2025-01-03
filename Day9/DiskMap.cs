@@ -8,17 +8,70 @@ namespace Day9
 {
     internal class DiskMap
     {
-        private int[] blocks;
-        private long checkSum = 0;
+        private int[] blocks, blocks2;
+        private long defrag1CheckSum = 0, defrag2CheckSum = 0;
+        private readonly Dictionary<int, FileLocation> fileBlocks = [];
+        private readonly List<FileLocation> blankBlocks = [];
         public DiskMap(string formatString)
         {
             ReadFormatString(formatString);
-            DefragDisk();
+            DefragDisk1();
+            DefragDisk2();
         }
 
-        public long CheckSum => checkSum;
+        public long Defrag1CheckSum => defrag1CheckSum;
+        public long Defrag2CheckSum => defrag2CheckSum;
 
-        private void DefragDisk()
+        private void DefragDisk2()
+        {
+            // work backwards through the fileBlocks and move them if possible
+            foreach (var fileId in fileBlocks.Keys.OrderByDescending(k=>k))
+            {
+                // now, find the first blank block that can fit the file
+                var file = fileBlocks[fileId];
+                var blankBlock = blankBlocks
+                    .Where(b=>b.FileOffset <= file.FileOffset)
+                    .OrderBy(b=>b.FileOffset)
+                    .FirstOrDefault(b => b.FileLength >= file.FileLength);
+                if (blankBlock != null)
+                {
+                    // move the file to the blank block
+                    var originalFileOffset = file.FileOffset;
+                    file.FileOffset = blankBlock.FileOffset;
+                    if (file.FileLength < blankBlock.FileLength)
+                    {
+                        // split the blank block
+                        blankBlock.FileOffset += file.FileLength;
+                        blankBlock.FileLength -= file.FileLength;
+                        blankBlocks.Add(new FileLocation { 
+                            FileId = -1, 
+                            FileOffset = originalFileOffset, 
+                            FileLength = file.FileLength 
+                        });
+                    }
+                    else
+                    {
+                        // move the blank block
+                        blankBlock.FileOffset = originalFileOffset;
+                    }
+
+                }
+            }
+
+            // calculate the checksum
+            var allBlocks = fileBlocks.Values.Concat(blankBlocks).OrderBy(a=>a.FileOffset);
+            foreach (var block in allBlocks)
+            {
+                for (int i = block.FileOffset; i < block.FileOffset + block.FileLength; i++)
+                {
+                    blocks2[i] = block.FileId;
+                    defrag2CheckSum += block.FileId == -1 ? 0 : block.FileId * i;
+                }
+            }
+        }
+
+
+        private void DefragDisk1()
         {
             // count how many blank (-1) blocks there are
             int blankCount = blocks.Count(i => i == -1);
@@ -48,7 +101,7 @@ namespace Day9
             // calculate the checksum
             for (int i = 0; i < blocks.Length - blankCount; i++)
             {
-                checkSum += blocks[i] * i;
+                defrag1CheckSum += blocks[i] * i;
             }
         }
 
@@ -56,6 +109,7 @@ namespace Day9
         {
             int blockCount = formatString.Select(i => int.Parse(i.ToString())).Sum(i => i);
             blocks = new int[blockCount];
+            blocks2 = new int[blockCount];
             int blockIndex = 0;
             int fileIndex = 0;
             for (int i = 0; i < formatString.Length; i++)
@@ -67,9 +121,38 @@ namespace Day9
                 }
                 if (i % 2 == 0)
                 {
+                    fileBlocks[fileIndex] = new FileLocation {
+                        FileId = fileIndex, FileLength = blockLength, FileOffset = blockIndex - blockLength };
                     fileIndex++;
                 }
+                else
+                {
+                    if (blockLength > 0)
+                    {
+                        blankBlocks.Add(new FileLocation
+                        {
+                            FileId = -1,
+                            FileLength = blockLength,
+                            FileOffset = blockIndex - blockLength
+                        });
+                    }
+                }
+            }
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                blocks2[i] = blocks[i];
             }
         }
     }
+
+    internal class FileLocation
+    {
+        public int FileId { get; set; }
+        public int FileOffset { get; set; }
+        public int FileLength { get; set; }
+    }
 }
+
+
+
+
